@@ -1,0 +1,62 @@
+name: Build Test
+
+on:
+  push:
+    branches:
+      - main
+      - dev
+  pull_request:
+  workflow_dispatch:
+  schedule:
+    - cron:  '0 2 * * *' # This schedules the workflow to run at 2 AM UTC every day
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: mbstring, xml, ctype, iconv, intl, pdo, pdo_mysql, tokenizer, json, gd
+          tools: composer:v2, php-cs-fixer, phpstan, phpunit
+          coverage: none
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/composer
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
+
+      - name: Cache Larastan
+        uses: actions/cache@v4
+        with:
+          path: /tmp/phpstan
+          key: ${{ runner.os }}-larastan-${{ hashFiles('**/phpstan.neon') }}
+          restore-keys: |
+            ${{ runner.os }}-larastan-
+
+      - name: Install dependencies
+        run: composer install --optimize-autoloader --no-interaction
+
+      - name: Security Checker
+        run: php vendor/bin/security-checker security:check composer.lock
+
+      - name: Code Sniffer
+        run: ./vendor/bin/phpcs -n --standard=./phpcs.xml src/ tests/
+
+      - name: Parallel tests
+        run: ./vendor/bin/paratest --runner WrapperRunner --no-coverage tests/
+
+      - name: PHPStan Analysis
+        run: ./vendor/bin/phpstan analyse --configuration phpstan.neon --no-progress --memory-limit=2G
