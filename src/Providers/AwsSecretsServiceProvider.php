@@ -1,9 +1,9 @@
 <?php
-namespace jonnylink\AwsLaravelSecrets\Providers;
+namespace jonlink\LaravelAwsSecrets\Providers;
 
 use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Support\ServiceProvider;
-use jonnylink\AwsLaravelSecrets\Support\AwsSecrets;
+use jonlink\LaravelAwsSecrets\Support\AwsSecrets;
 
 class AwsSecretsServiceProvider extends ServiceProvider implements DeferrableProvider {
     public function register(): void {

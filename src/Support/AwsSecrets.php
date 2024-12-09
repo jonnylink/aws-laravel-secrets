@@ -1,5 +1,5 @@
 <?php
-namespace jonnylink\AwsLaravelSecrets\Support;
+namespace jonlink\LaravelAwsSecrets\Support;
 
 use Aws\SecretsManager\SecretsManagerClient;
 use stdClass;

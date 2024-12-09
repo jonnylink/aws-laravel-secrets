@@ -1,10 +1,10 @@
 <?php
-namespace jonnylink\AwsLaravelSecrets\Console\Commands;
+namespace jonlink\LaravelAwsSecrets\Console\Commands;
 
 use Exception;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
-use jonnylink\AwsLaravelSecrets\Support\AwsSecrets;
+use jonlink\LaravelAwsSecrets\Support\AwsSecrets;
 
 class RotateAwsSecret extends Command {
     protected $description = 'Sync account roles.';
